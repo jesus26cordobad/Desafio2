@@ -25,11 +25,11 @@ Album::Album(int codigo, string nom, string fecha, string sello)
     canciones(new ArrayDinamico<Cancion*>()) {}
 
 Album::~Album() {
-    // no borramos canciones si las gestiona otro módulo
     delete generos;
     delete canciones;
 }
 
+// Getters
 int Album::getCodigoId() const { return codigoId; }
 string Album::getNombre() const { return nombre; }
 string Album::getFechaLanzamiento() const { return fechaLanzamiento; }
@@ -40,10 +40,13 @@ float Album::getPuntuacion() const { return puntuacion; }
 int Album::getCantidadCanciones() const { return canciones->getCantidad(); }
 int Album::getCantidadGeneros() const { return generos->getCantidad(); }
 
+// Setters
 void Album::setNombre(string nom) { nombre = nom; }
 void Album::setRutaPortada(string ruta) { rutaPortada = ruta; }
 void Album::setPuntuacion(float punt) { puntuacion = punt; }
+void Album::setDuracionTotal(int segundos) { duracionTotal = segundos; }
 
+// Gestión
 bool Album::agregarGenero(string genero) {
     if (generos->getCantidad() >= 4) return false;
     return generos->agregar(genero);
@@ -51,10 +54,13 @@ bool Album::agregarGenero(string genero) {
 
 bool Album::agregarCancion(Cancion* cancion) {
     if (!cancion) return false;
+    cancion->setAlbum(this);
     bool ok = canciones->agregar(cancion);
     if (ok) {
-        cancion->setAlbum(this); // ENLACE PARA REPRODUCTOR
         calcularDuracionTotal();
+    } else {
+        //Revertir el enlace si no se pudo agregar (por seguridad)
+        cancion->setAlbum(nullptr);
     }
     return ok;
 }
@@ -63,8 +69,7 @@ Cancion* Album::buscarCancion(long idCancion) const {
     int n = canciones->getCantidad();
     for (int i = 0; i < n; ++i) {
         Cancion* c = canciones->obtener(i);
-        if (!c) continue;
-        if (c->getIdentificador() == idCancion) {
+        if (c && c->getIdentificador() == idCancion) {
             return c;
         }
     }

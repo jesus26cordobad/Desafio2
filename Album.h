@@ -19,7 +19,7 @@ private:
     string nombre;
     string fechaLanzamiento;
     int duracionTotal;
-    ArrayDinamico<string>* generos;
+    ArrayDinamico<string>* generos;      // máx 4
     string selloDisquero;
     string rutaPortada;
     float puntuacion;
@@ -32,6 +32,7 @@ public:
     Album(int codigo, string nom, string fecha, string sello);
     ~Album();
 
+    // Getters
     int getCodigoId() const;
     string getNombre() const;
     string getFechaLanzamiento() const;
@@ -42,19 +43,25 @@ public:
     int getCantidadCanciones() const;
     int getCantidadGeneros() const;
 
+    // Setters
     void setNombre(string nom);
     void setRutaPortada(string ruta);
     void setPuntuacion(float punt);
 
-    bool agregarGenero(string genero);
+    void setDuracionTotal(int segundos);
+
+    // Gestión
+    bool agregarGenero(string genero);          // respeta máx 4
     bool agregarCancion(Cancion* cancion);
     Cancion* buscarCancion(long idCancion) const;
     Cancion* obtenerCancion(int indice) const;
-    string obtenerGenero(int indice) const;
+    string   obtenerGenero(int indice) const;
 
     Album operator+(const Album& otro) const;
 
+    // Métrica
     long calcularMemoria() const;
 };
 
 #endif
+
